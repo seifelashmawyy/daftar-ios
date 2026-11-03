@@ -1,0 +1,58 @@
+name: Build unsigned Daftar IPA
+on:
+  workflow_dispatch:
+    inputs:
+      daftar_url:
+        description: 'Existing Daftar HTTPS origin (https://your-site.example)'
+        required: true
+        type: string
+        default: 'https://daftar.seif-planner.workers.dev'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DAFTAR_URL: ${{ inputs.daftar_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run configure
+      - run: npm run ios:add
+      - run: npm run ios:sync
+      - name: Apply app icon
+        run: |
+          python3 scripts/icon.py
+      - name: Compile for a real iOS device without signing
+        run: |
+          xcodebuild -version
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' \
+            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
+            build
+      - name: Package unsigned IPA
+        run: |
+          test -d build/Build/Products/Release-iphoneos/App.app
+          mkdir -p dist/Payload
+          cp -R build/Build/Products/Release-iphoneos/App.app dist/Payload/
+          cd dist
+          /usr/bin/zip -qry Daftar-unsigned.ipa Payload
+          unzip -t Daftar-unsigned.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Daftar-unsigned-IPA
+          path: dist/Daftar-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 7

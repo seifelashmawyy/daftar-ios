@@ -1,0 +1,17 @@
+{
+  "name": "daftar-ios-wrapper",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "configure": "node scripts/configure.cjs",
+    "ios:add": "cap add ios --packagemanager SPM",
+    "ios:sync": "cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.0.0",
+    "@capacitor/ios": "8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.0.0"
+  }
+}
