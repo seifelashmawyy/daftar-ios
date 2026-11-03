@@ -73,7 +73,7 @@ npx cap open ios
 
 ## Validation status
 
-Configuration generation and packaging inputs can be checked on Windows. An actual IPA is produced only when the macOS GitHub Actions workflow succeeds. No workflow has been dispatched from this local folder and no on-device test is claimed. If it fails, send the failing step's log (without credentials) so the build can be corrected.
+The first macOS build succeeded on 3 November 2026: https://github.com/seifelashmawyy/daftar-ios/actions/runs/41566347294 . All build steps passed, including real-device Release compilation, IPA ZIP validation and artifact upload. Download: https://github.com/seifelashmawyy/daftar-ios/actions/runs/41566347294/artifacts/13199326513 . Extract the downloaded ZIP and choose Daftar-unsigned.ipa in SideStore or AltStore Classic. The artifact expires on 10 November 2026; save it or rerun the workflow. No on-device test is claimed. This chat could retrieve the artifact reference, but local download was blocked by DNS resolution, so no local IPA is claimed.
 
 ## Reference documentation
 
